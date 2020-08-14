@@ -1,0 +1,10 @@
+PLUMED - master commit 0e820ec646075720a4b830895223241e6bced41b https://github.com/plumed/plumed2
+
+LAMMPS - stable commit 6354777d098deafc18a600877d00dbfcd8ce15c3 https://github.com/lammps/lammps
+
+Open init-setup.sh and change "$HOME/opt" to the desired PLUMED installation directory
+Run '$ ./init-setup.sh' after downloading the project for the first time to configure PLUMED and build the project
+
+Run '$ ./compile.sh' to recompile the project(after source code changes or a git pull command)
+
+Run '$ ./run.sh' to execute the example LAMMPS script

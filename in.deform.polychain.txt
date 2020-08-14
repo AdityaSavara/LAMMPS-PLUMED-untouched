@@ -1,0 +1,71 @@
+#####################################################
+#                                                   #
+#                                                   #
+# Filename: in.deform.polychain.txt                 #
+# Author: Mark Tschopp, 2010                        #
+#                                                   #
+# The methodology outlined here follows that from   #
+# Hossain, Tschopp, et al. 2010, Polymer.  Please   #
+# cite accordingly. The following script requires   #
+# a LAMMPS data file containing the coordinates and #
+# appropriate bond/angle/dihedral lists for each    #
+# united atom.                                      #
+#                                                   #
+# Execute the script through:                       #
+# lmp_exe < in.deform.polychain.txt                 #
+#                                                   #
+#####################################################
+
+# VARIABLES
+variable fname index PE_cl100.txt
+variable simname index PE_cl100
+
+# Initialization
+units		real
+boundary	p p p #f f f
+atom_style	molecular
+log 		log.${simname}.txt
+read_data	${fname}
+
+# Dreiding potential information
+neighbor	1.0 bin #0.4 bin
+neigh_modify	every 1 delay 1 one 10000 # Added delay so it doesn't wait 10 steps.
+bond_style      harmonic
+bond_coeff	1 350 1.53
+angle_style     harmonic
+angle_coeff	1 60 109.5
+dihedral_style	multi/harmonic
+dihedral_coeff	1 1.73 -4.49 0.776 6.99 0.0
+pair_style	lj/cut 10.5
+pair_coeff	1 1 0.112 4.01 10.5
+
+
+
+#####################################################
+# Equilibration (NVT dynamics at constant temperature)
+
+variable myTemp equal 100.0 # Added so the temperature could be adjusted with a single change to the script
+variable timeStep equal 2 # femptoseconds - Added so variables declarations can be grouped
+variable outputFreq equal round(2500/${timeStep})
+variable numOutputSteps equal 1000 # Number of frames in trajectory output
+variable numSimSteps equal 25000000 #${numOutputSteps}*${outputFreq} # Number of timesteps the simulation will run
+
+
+velocity 	all create ${myTemp} 1231 # velocity groupID style[create] temp randomSeed
+timestep	${timeStep} #Set simulation timestemp
+thermo_style	custom step temp #Configure thermodynamic info output style
+thermo          100000 #Interval(in timesteps) on which thermodynamic data is printed
+
+fix		1 all nvt temp ${myTemp} ${myTemp} 10.0
+fix		2 all plumed plumedfile plumed.dat outfile p.log
+
+dump 		1 all custom ${outputFreq} dump.lammpstrj id type xu yu zu #added, output every 25000 to match time of toymodel with timestep=1
+
+run		${numSimSteps}
+
+unfix 1
+unfix 2
+
+write_restart 	restart.${simname}.dreiding1
+
+print "All done"
