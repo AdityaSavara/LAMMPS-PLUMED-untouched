@@ -1,0 +1,11 @@
+PLUMED_LIBDIR=/home/christopher/Documents/unmod-bin/lib
+# PLUMED: static installation
+PLUMED_LOAD= "/home/christopher/Documents/unmod-bin/lib/libplumed.a" -ldl  -lstdc++ -ldl   -rdynamic -Wl,-Bsymbolic -fopenmp 
+PLUMED_DEPENDENCIES= "/home/christopher/Documents/unmod-bin/lib/libplumed.a"
+# Settings that the LAMMPS build will import when this package library is used
+
+#  Use statically linked C++ interface to plumed
+
+plumed_SYSINC = -D__PLUMED_WRAPPER_CXX=1
+plumed_SYSLIB = $(PLUMED_LOAD)
+plumed_SYSPATH = 

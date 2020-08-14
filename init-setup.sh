@@ -1,4 +1,4 @@
-INSTALLDIR="/home/christopher/Documents/PLUMED-bin"
+INSTALLDIR="/home/christopher/Documents/unmod-bin"
 cd PLUMED-src
 echo "Configuring PLUMED..."
 ./configure --prefix=$INSTALLDIR CC=gcc CXX=g++ > /dev/null
